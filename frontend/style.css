@@ -1,0 +1,24 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+.container {
+	position: relative;
+	z-index: 1;
+	max-width: 1500px;
+	margin: 0 auto;
+}
+.title {
+}
+.questions {
+}
+.que {
+}
+.que_title {
+}
+.answers {
+}
+.ans {
+}
