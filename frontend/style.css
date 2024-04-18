@@ -99,8 +99,6 @@ body {
 	background: black;
 }
 .send {
-	position: absolute;
-	right: 10px;
 	text-transform: uppercase;
 	padding: 20px 40px;
 	border-radius: 10px;
@@ -109,9 +107,21 @@ body {
 	cursor: pointer;
 	background: white;
 	transition: 0.2s;
+	margin-left: 10px;
+	margin-top: 10px;
+}
+.red {
+	background: #ed9090;
+	color: white;
+}
+.send:hover.red {
+	background: #ef6b6b;
 }
 .send:hover {
 	background: rgba(255, 255, 255, 0.614);
+}
+.sendContainer {
+	text-align: end;
 }
 @media (max-width: 1000px) {
 	.container {
