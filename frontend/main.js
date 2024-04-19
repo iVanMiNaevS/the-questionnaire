@@ -4,6 +4,16 @@ const question = document.querySelector(".questions");
 const countQue = question.querySelectorAll("li").length;
 const data = { ans: {} };
 
+function identifyingUnAns() {
+	for (let i = 1; i <= countQue; i++) {
+		if (!Object.keys(data.ans).includes(String(i))) {
+			document.querySelector(`[id='${i}']`).classList.add("red");
+		} else {
+			document.querySelector(`[id='${i}']`).classList.remove("red");
+		}
+	}
+}
+
 question.addEventListener("click", (e) => {
 	let target = e.target;
 
@@ -25,7 +35,7 @@ async function postAnswers() {
 			body: JSON.stringify(data),
 		});
 		let result = await response.json();
-		console.log(result);
+		return result;
 	} catch (err) {
 		console.log(err);
 	}
@@ -45,9 +55,13 @@ bt.addEventListener("click", async () => {
 	if (Object.keys(data.ans).length !== countQue) {
 		document.querySelector("span").innerText = "Ответье на все вопросы";
 		bt.classList.add("red");
+		identifyingUnAns();
 	} else {
 		document.querySelector("span").innerText = "";
 		bt.classList.remove("red");
-		postAnswers();
+		const res = await postAnswers();
+		if (res) {
+			document.location.href = "./thanks.html";
+		}
 	}
 });
