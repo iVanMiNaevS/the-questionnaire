@@ -124,6 +124,7 @@ body {
 }
 .send:hover {
 	background: white;
+	color: #000;
 }
 .sendContainer {
 	text-align: end;
