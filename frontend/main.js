@@ -2,11 +2,11 @@ const bt = document.querySelector(".send");
 
 const question = document.querySelector(".questions");
 const countQue = question.querySelectorAll("li").length;
-const data = { ans: {} };
+const data = {};
 
 function identifyingUnAns() {
 	for (let i = 1; i <= countQue; i++) {
-		if (!Object.keys(data.ans).includes(String(i))) {
+		if (!Object.keys(data).includes(String(i))) {
 			document.querySelector(`[id='${i}']`).classList.add("red");
 		} else {
 			document.querySelector(`[id='${i}']`).classList.remove("red");
@@ -20,7 +20,7 @@ question.addEventListener("click", (e) => {
 	if (target.classList.contains("labelQue")) {
 		const que = target.id.split("-")[1];
 		const answer = target.id.split("-")[2];
-		data.ans[que] = answer;
+		data[que] = answer;
 		console.log(data);
 	}
 });
@@ -52,7 +52,7 @@ async function getData() {
 }
 
 bt.addEventListener("click", async () => {
-	if (Object.keys(data.ans).length !== countQue) {
+	if (Object.keys(data).length !== countQue) {
 		document.querySelector("span").innerText = "Ответье на все вопросы";
 		bt.classList.add("red");
 		identifyingUnAns();

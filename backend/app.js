@@ -2,61 +2,44 @@ const express = require("express");
 require("dotenv").config();
 const PORT = process.env.PORT;
 const app = express();
-
 const cors = require("cors");
 app.use(cors());
 app.use(express.json());
-
-const answers = [];
-const countAns = {
-	// 1: { 1: 0, 2: 0, 3: 0 },
-	// 2: { 1: 0, 2: 0, 3: 0 },
-	// 3: { 1: 0, 2: 0, 3: 0 },
-	// 4: { 1: 0, 2: 0, 3: 0 },
-	// 5: { 1: 0, 2: 0, 3: 0 },
-};
-const procents = {
-	// 1: { 1: 100, 2: 30, 3: 40 },
-};
-app.get("/api/data", (req, res) => {
-	res.json(answers);
-});
-
 function calcPerc(all, count) {
 	return Math.round((count * 100) / all);
 }
 
-app.post("/api/data", (req, res) => {
-	answers.push(req.body);
-	const ans = req.body.ans;
-	Object.keys(ans).forEach((que) => {
-		const an = ans[que];
-		if (countAns[que] == undefined) {
-			countAns[que] = { [an]: 1 };
+const answerController = require("../backend/controller/answerController");
+const countQueryController = require("../backend/controller/countQueryController");
+
+app.post("/api/data", async (req, res) => {
+	const countQuery = await countQueryController.getCountQuery();
+	console.log("cq " + countQuery);
+	if (countQuery === undefined) {
+		countQueryController.createCountQuery(1);
+	} else {
+		countQueryController.updateCountQuery(countQuery + 1);
+	}
+	const answers = req.body;
+	Object.keys(answers).forEach(async (que) => {
+		const answer = answers[que];
+		const answerFromdb = await answerController.getOneAnswer(que, answer);
+		// console.log(answerFromdb);
+		if (answerFromdb === undefined) {
+			console.log("if");
+			answerController.createAnswer({ name: answer, que_id: que });
 		} else {
-			if (countAns[que][an] == undefined) {
-				countAns[que][an] = 1;
-			} else {
-				countAns[que][an] += 1;
-			}
+			console.log("else");
+			answerController
+				.getCountAnswer(answer, que)
+				.then((currentCount) =>
+					answerController.updateAnswerCount(currentCount + 1, answer, que)
+				);
 		}
 	});
-	Object.keys(countAns).forEach((que) => {
-		Object.keys(countAns[que]).forEach((an) => {
-			const count = countAns[que][an];
-			if (procents[que] === undefined) {
-				procents[que] = { [an]: calcPerc(answers.length, count) };
-			} else {
-				procents[que][an] = calcPerc(answers.length, count);
-			}
-		});
-	});
-	res.json(answers);
-});
 
-app.get("/api/procents", (req, res) => {
-	console.log(procents);
-	res.json(procents);
+	const allAnswers = await answerController.getAnswers();
+	res.json(allAnswers);
 });
 
 app.listen(PORT, () => {
