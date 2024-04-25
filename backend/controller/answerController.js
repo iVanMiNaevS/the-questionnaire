@@ -9,12 +9,12 @@ class AnswerController {
 			console.log(err);
 		}
 	}
-	async createAnswer(col) {
+	async createAnswer(col, procent) {
 		const { name, que_id } = col;
 		try {
 			const newAnswer = await db.query(
-				"INSERT INTO answer (name, que_id, count, procent) values ($1, $2, 0, 0) RETURNING *",
-				[name, que_id]
+				"INSERT INTO answer (name, que_id, count, procent) values ($1, $2, 1, $3) RETURNING *",
+				[name, que_id, procent]
 			);
 			// console.log(newAnswer.rows[0]);
 		} catch (err) {
@@ -39,9 +39,9 @@ class AnswerController {
 				"UPDATE answer set count = $1 where name = $2 and que_id = $3  RETURNiNG *",
 				[count, name, que_id]
 			);
-			console.log("update");
+			console.log("update count");
 		} catch (err) {
-			console.log(err);
+			console.log("Error in updateAnswerCount " + err.where);
 		}
 	}
 
@@ -53,7 +53,30 @@ class AnswerController {
 			);
 			return count.rows[0].count;
 		} catch (err) {
-			console.log(err);
+			console.log("Error in getCountAnswer " + err.where);
+		}
+	}
+	async updateProcentAnswer(procent, name, que_id) {
+		try {
+			const answer = await db.query(
+				"UPDATE answer set procent = $1 where name = $2 and que_id = $3  RETURNiNG *",
+				[procent, name, que_id]
+			);
+			console.log("update procent");
+		} catch (err) {
+			console.log("Error in updateProcentAnswer " + err.where);
+		}
+	}
+	async getOtherAnswerProcent(name, que_id) {
+		try {
+			const answer = await db.query(
+				"SELECT * from answer where name != $1 and que_id = $2",
+				[name, que_id]
+			);
+
+			return answer.rows;
+		} catch (err) {
+			console.log("Error in getOtherAnswerProcent " + err);
 		}
 	}
 }

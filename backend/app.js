@@ -8,13 +8,26 @@ app.use(express.json());
 function calcPerc(all, count) {
 	return Math.round((count * 100) / all);
 }
-
+async function updateOtherAnswer(answer, que, countQuery) {
+	const otherAnswer = await answerController.getOtherAnswerProcent(answer, que);
+	console.log(otherAnswer);
+	if (otherAnswer !== undefined) {
+		otherAnswer.forEach(async (answer) => {
+			const currentCount = await answerController.getCountAnswer(
+				answer.name,
+				answer.que_id
+			);
+			const proc = calcPerc(countQuery + 1, currentCount);
+			console.log(proc);
+			answerController.updateProcentAnswer(proc, answer.name, answer.que_id);
+		});
+	}
+}
 const answerController = require("../backend/controller/answerController");
 const countQueryController = require("../backend/controller/countQueryController");
 
 app.post("/api/data", async (req, res) => {
 	const countQuery = await countQueryController.getCountQuery();
-	console.log("cq " + countQuery);
 	if (countQuery === undefined) {
 		countQueryController.createCountQuery(1);
 	} else {
@@ -26,15 +39,20 @@ app.post("/api/data", async (req, res) => {
 		const answerFromdb = await answerController.getOneAnswer(que, answer);
 		// console.log(answerFromdb);
 		if (answerFromdb === undefined) {
-			console.log("if");
-			answerController.createAnswer({ name: answer, que_id: que });
+			answerController.createAnswer(
+				{ name: answer, que_id: que },
+				calcPerc(countQuery === undefined ? 1 : countQuery + 1, 1)
+			);
+			updateOtherAnswer(answer, que, countQuery);
 		} else {
-			console.log("else");
-			answerController
-				.getCountAnswer(answer, que)
-				.then((currentCount) =>
-					answerController.updateAnswerCount(currentCount + 1, answer, que)
-				);
+			answerController.getCountAnswer(answer, que).then((currentCount) => {
+				answerController.updateAnswerCount(currentCount + 1, answer, que);
+				console.log("cq " + countQuery + " " + "CC " + currentCount);
+				const proc = calcPerc(countQuery + 1, currentCount + 1);
+				console.log(proc);
+				answerController.updateProcentAnswer(proc, answer, que);
+			});
+			updateOtherAnswer(answer, que, countQuery);
 		}
 	});
 

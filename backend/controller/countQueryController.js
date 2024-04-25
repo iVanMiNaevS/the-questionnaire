@@ -3,7 +3,7 @@ const db = require("../db");
 class CountQueryController {
 	async updateCountQuery(count) {
 		try {
-			const count = await db.query(
+			const countdb = await db.query(
 				"UPDATE countquery set count = $1 RETURNiNG *",
 				[count]
 			);
@@ -26,7 +26,11 @@ class CountQueryController {
 	async getCountQuery() {
 		try {
 			const count = await db.query("SELECT * FROM countquery");
-			return count.rows[0];
+			console.log(count.rows[0]);
+			if (count.rows[0] === undefined) {
+				return undefined;
+			}
+			return count.rows[0].count;
 		} catch (err) {
 			console.log(err);
 		}
