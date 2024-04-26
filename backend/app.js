@@ -60,6 +60,11 @@ app.post("/api/data", async (req, res) => {
 	res.json(allAnswers);
 });
 
+app.get("/api/procents", async (req, res) => {
+	const answers = await answerController.getAnswers();
+	res.json(answers);
+});
+
 app.listen(PORT, () => {
 	console.log("SERVER WORK ON " + PORT);
 });

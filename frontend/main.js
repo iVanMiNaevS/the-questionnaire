@@ -62,6 +62,7 @@ bt.addEventListener("click", async () => {
 		const res = await postAnswers();
 		if (res) {
 			document.location.href = "./thanks.html";
+			console.log(res);
 		}
 	}
 });
