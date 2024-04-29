@@ -57,7 +57,7 @@ app.post("/api/data", async (req, res) => {
 	});
 
 	const allAnswers = await answerController.getAnswers();
-	res.json(allAnswers);
+	res.json({ name: "sdfdf" });
 });
 
 app.get("/api/procents", async (req, res) => {

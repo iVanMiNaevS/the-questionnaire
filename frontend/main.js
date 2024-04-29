@@ -59,6 +59,7 @@ bt.addEventListener("click", async () => {
 	} else {
 		document.querySelector("span").innerText = "";
 		bt.classList.remove("red");
+		identifyingUnAns();
 		const res = await postAnswers();
 		if (res) {
 			document.location.href = "./thanks.html";
