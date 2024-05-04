@@ -1,6 +1,6 @@
 const procents = document.querySelectorAll(".procent");
 const progress = document.querySelectorAll(".proggres");
-
+const APPURL = "https://que.iswebdev.ru";
 function identifyAndInstall(el, answers, resolve, reject) {
 	const que = Number(el.id.split("-")[1]);
 	const answer = Number(el.id.split("-")[2]);
@@ -16,7 +16,7 @@ function identifyAndInstall(el, answers, resolve, reject) {
 
 window.addEventListener("load", async () => {
 	try {
-		const response = await fetch("http://localhost:3000/api/procents");
+		const response = await fetch(`${APPURL}/api/procents`);
 		const data = await response.json();
 		procents.forEach((el) => {
 			identifyAndInstall(

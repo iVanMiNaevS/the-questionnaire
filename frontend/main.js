@@ -1,5 +1,7 @@
 const bt = document.querySelector(".send");
 
+const APPURL = "https://que.iswebdev.ru";
+
 const question = document.querySelector(".questions");
 const countQue = question.querySelectorAll("li").length;
 const data = {};
@@ -27,7 +29,7 @@ question.addEventListener("click", (e) => {
 
 async function postAnswers() {
 	try {
-		let response = await fetch("http://localhost:3000/api/data", {
+		let response = await fetch(`${APPURL}/api/data`, {
 			method: "post",
 			headers: {
 				"Content-Type": "application/json",
@@ -43,7 +45,7 @@ async function postAnswers() {
 
 async function getData() {
 	try {
-		const response = await fetch("http://localhost:3000/api/data");
+		const response = await fetch(`${APPURL}/api/data`);
 		const data = await response.json();
 		console.log(data);
 	} catch (err) {
